@@ -5,7 +5,7 @@ services:
  app:
    build: .
    env_file:
-     - ./environment/dev.env
+     - environment/api.env
    ports:
      - "8000:8000"
    volumes:
@@ -19,9 +19,7 @@ services:
 
  db:
    image: postgres:11-alpine
-   environment:
-     - POSTGRES_DB=app
-     - POSTGRES_USER=postgres
-     - POSTGRES_PASSWORD=supersecretpassword
+   env_file:
+     - ./environment/db.env
    volumes:
      - /dbdata:/var/lib/postgresql/data
