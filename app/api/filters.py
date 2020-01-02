@@ -6,7 +6,7 @@ from .models import Movie
 class ArrayFieldsFilter(filters.FilterSet):
     genre = filters.CharFilter(lookup_expr='icontains')
     director = filters.CharFilter(lookup_expr='icontains')
-    writers = filters.CharFilter(lookup_expr='icontains')
+    writer = filters.CharFilter(lookup_expr='icontains')
 
     class Meta:
         model = Movie
