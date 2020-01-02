@@ -7,6 +7,8 @@ from django.db.models import Count
 from django.db.models.expressions import Window, F
 from django.db.models.functions.window import Rank
 
+from django_filters.rest_framework import DjangoFilterBackend
+
 from .models import Movie, Comment
 from .serializers import MovieSerializer, CommentSerializer
 from .omdb_handler import get_data_from_omdb
@@ -66,6 +68,8 @@ class MovieViews(ListCreateAPIView):
 class CommentViews(ListCreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ('movie', )
 
 
 class TopView(APIView):
