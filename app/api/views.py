@@ -1,6 +1,11 @@
 from rest_framework import status
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import ListCreateAPIView
+
+from django.db.models import Count
+from django.db.models.expressions import Window, F
+from django.db.models.functions.window import Rank
 
 from .models import Movie, Comment
 from .serializers import MovieSerializer, CommentSerializer
@@ -61,3 +66,15 @@ class MovieViews(ListCreateAPIView):
 class CommentViews(ListCreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+
+
+class TopView(APIView):
+    ranking = Window(
+        expression=Rank(),
+        order_by=F('num_of_comments').desc()
+    )
+
+    def get(self, request):
+        query = Comment.objects.select_related('movie').values('movie__title').annotate(
+            num_of_comments=Count('movie')).annotate(ranking=self.ranking)
+        return Response([movie for movie in query])
