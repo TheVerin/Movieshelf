@@ -10,10 +10,6 @@ class MovieSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class OnlyTitleSerializer(serializers.Serializer):
-    title = serializers.CharField(max_length=255, allow_blank=False, allow_null=False)
-
-
 class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
