@@ -2,8 +2,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.generics import ListCreateAPIView
 
-from .models import Movie
-from .serializers import MovieSerializer
+from .models import Movie, Comment
+from .serializers import MovieSerializer, CommentSerializer
 from .omdb_handler import get_data_from_omdb
 
 
@@ -56,3 +56,8 @@ class MovieViews(ListCreateAPIView):
             return Response(serializer.data, status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+
+
+class CommentViews(ListCreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
