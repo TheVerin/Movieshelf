@@ -18,9 +18,10 @@ from .filters import ArrayFieldsFilter
 class MovieViews(ListCreateAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
-    filter_backends = (filters.SearchFilter, DjangoFilterBackend)
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend, filters.OrderingFilter)
     search_fields = ('title', )
     filterset_class = ArrayFieldsFilter
+    ordering_fields = ('year', 'imdb_rating', 'box_office')
 
     def create(self, request, *args, **kwargs):
         title = request.data['title']
