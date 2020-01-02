@@ -27,7 +27,7 @@ class CommentViewsTest(TestCase):
         serializer = CommentSerializer(from_db, many=True)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data, serializer.data)
+        self.assertEqual(response.data['results'], serializer.data)
 
     def test_create_valid_comment(self):
         payload = {
