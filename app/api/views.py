@@ -1,4 +1,4 @@
-from rest_framework import status
+from rest_framework import status, filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import ListCreateAPIView
@@ -17,6 +17,8 @@ from .omdb_handler import get_data_from_omdb
 class MovieViews(ListCreateAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
+    filter_backends = (filters.SearchFilter, )
+    search_fields = ('title', )
 
     def create(self, request, *args, **kwargs):
         title = request.data['title']
