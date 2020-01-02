@@ -12,13 +12,15 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import Movie, Comment
 from .serializers import MovieSerializer, CommentSerializer
 from .omdb_handler import get_data_from_omdb
+from .filters import ArrayFieldsFilter
 
 
 class MovieViews(ListCreateAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
-    filter_backends = (filters.SearchFilter, )
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend)
     search_fields = ('title', )
+    filterset_class = ArrayFieldsFilter
 
     def create(self, request, *args, **kwargs):
         title = request.data['title']
