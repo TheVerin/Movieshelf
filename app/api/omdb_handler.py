@@ -18,6 +18,8 @@ def get_data_from_omdb(title):
         movie_data['Director'] = movie_data['Director'].split(', ')
         movie_data['Writer'] = movie_data['Writer'].split(', ')
         movie_data['Actors'] = movie_data['Actors'].split(', ')
+        movie_data['Ratings'] = [[rating['Source'], rating['Value']]
+                                 for rating in movie_data['Ratings']]
         movie_data['Metascore'] = int(movie_data['Metascore'])
         movie_data['imdbRating'] = float(movie_data['imdbRating'])
         movie_data['imdbVotes'] = int(''.join(movie_data['imdbVotes'].split(',')))
