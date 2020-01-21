@@ -11,7 +11,8 @@ from api.serializers.movie_serializer import MovieSerializer
 class MovieViewsTest(TestCase):
 
     def setUp(self) -> None:
-        self.all_movies_url = reverse('movie')
+        self.get_movies = reverse('get')
+        self.create_movie = reverse('create')
         self.client = APIClient()
 
         movies = ('Shrek', 'Avatar', 'Titanic', 'The Godfather')
@@ -20,7 +21,7 @@ class MovieViewsTest(TestCase):
             Movie.objects.create(title=movie)
 
     def test_get_all_movies(self):
-        response = self.client.get(self.all_movies_url)
+        response = self.client.get(self.get_movies)
         from_db = Movie.objects.all()
         serializer = MovieSerializer(from_db, many=True)
 
@@ -34,7 +35,7 @@ class MovieViewsTest(TestCase):
 
         before = Movie.objects.all().count()
 
-        response = self.client.post(self.all_movies_url, payload)
+        response = self.client.post(self.create_movie, payload)
 
         after = Movie.objects.all().count()
         from_db = Movie.objects.latest('pk')
@@ -49,7 +50,7 @@ class MovieViewsTest(TestCase):
             'title': ''
         }
 
-        response = self.client.post(self.all_movies_url, payload)
+        response = self.client.post(self.create_movie, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data, 'Movie does not exists')
@@ -59,7 +60,7 @@ class MovieViewsTest(TestCase):
             'title': 'Avatar'
         }
 
-        response = self.client.post(self.all_movies_url, payload)
+        response = self.client.post(self.create_movie, payload)
 
         self.assertTrue(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertTrue(response.data, 'Movie already exists!')

@@ -1,7 +1,7 @@
 from rest_framework import status, filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, ListCreateAPIView
 
 from django.db.models import Count
 from django.db.models.expressions import Window, F
@@ -12,18 +12,23 @@ from django_filters.rest_framework import DjangoFilterBackend
 from api.models.comment import Comment
 from api.models.movie import Movie
 from api.serializers.comment_serializer import CommentSerializer
-from api.serializers.movie_serializer import MovieSerializer
+from api.serializers.movie_serializer import MovieSerializer, JustTitleSerializer
 from .omdb_handler import get_data_from_omdb
 from .filters import ArrayFieldsFilter
 
 
-class MovieViews(ListCreateAPIView):
+class GetMovies(ListAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
     filter_backends = (filters.SearchFilter, DjangoFilterBackend, filters.OrderingFilter)
     search_fields = ('title', )
     filterset_class = ArrayFieldsFilter
     ordering_fields = ('year', 'imdb_rating', 'box_office')
+
+
+class CreateMovie(CreateAPIView):
+    queryset = Movie.objects.all()
+    serializer_class = JustTitleSerializer
 
     def create(self, request, *args, **kwargs):
         title = request.data['title']
@@ -64,7 +69,7 @@ class MovieViews(ListCreateAPIView):
             'response': movie_data['Response'],
         }
 
-        serializer = self.serializer_class(data=post_data)
+        serializer = MovieSerializer(data=post_data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status.HTTP_201_CREATED)
