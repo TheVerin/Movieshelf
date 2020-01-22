@@ -4,6 +4,8 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
+from unittest.mock import patch
+
 from api.models.movie import Movie
 from api.serializers.movie_serializer import MovieSerializer
 
@@ -28,7 +30,8 @@ class MovieViewsTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
 
-    def test_create_valid_movie(self):
+    @patch('api.views.OMDBHandler')
+    def test_create_valid_movie(self, mock_ombd):
         payload = {
             'title': 'Interstellar'
         }
@@ -45,7 +48,8 @@ class MovieViewsTest(TestCase):
         self.assertEqual(serializer.data['title'], payload['title'])
         self.assertTrue(before, after)
 
-    def test_create_invalid_movie(self):
+    @patch('api.views.OMDBHandler')
+    def test_create_invalid_movie(self, mock_ombd):
         payload = {
             'title': ''
         }
@@ -55,7 +59,8 @@ class MovieViewsTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data, 'Movie does not exists')
 
-    def test_movie_already_exists(self):
+    @patch('api.views.OMDBHandler')
+    def test_movie_already_exists(self, mock_ombd):
         payload = {
             'title': 'Avatar'
         }

@@ -13,7 +13,7 @@ from api.models.comment import Comment
 from api.models.movie import Movie
 from api.serializers.comment_serializer import CommentSerializer
 from api.serializers.movie_serializer import MovieSerializer, JustTitleSerializer
-from .omdb_handler import get_data_from_omdb
+from api.tools.omdb_handler import OMDBHandler
 from .filters import ArrayFieldsFilter
 
 
@@ -29,6 +29,7 @@ class GetMovies(ListAPIView):
 class CreateMovie(CreateAPIView):
     queryset = Movie.objects.all()
     serializer_class = JustTitleSerializer
+    handler = OMDBHandler()
 
     def create(self, request, *args, **kwargs):
         title = request.data['title']
@@ -36,7 +37,7 @@ class CreateMovie(CreateAPIView):
         if Movie.objects.filter(title=title).exists():
             return Response('Movie already exists!', status.HTTP_400_BAD_REQUEST)
 
-        movie_data = get_data_from_omdb(title=title)
+        movie_data = self.handler.get_data_from_omdb(title=title)
 
         if movie_data == status.HTTP_404_NOT_FOUND:
             return Response('Movie does not exists', status.HTTP_400_BAD_REQUEST)
